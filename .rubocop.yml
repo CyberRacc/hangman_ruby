@@ -1,0 +1,73 @@
+# .rubocop.yml
+
+# AllCops configuration
+AllCops:
+  Exclude:
+    - 'vendor/**/*' # Exclude vendor directory
+    - 'db/**/*'     # Exclude db directory
+
+# Style/Documentation configuration
+Style/Documentation:
+  Enabled: false
+
+# Style/Encoding configuration
+Style/Encoding:
+  Enabled: true
+
+# Style/EmptyMethod configuration
+Style/EmptyMethod:
+  Enabled: true
+
+# Style/GlobalVars configuration
+Style/GlobalVars:
+  Enabled: true
+
+# Style/MethodCallParentheses configuration
+Style/MethodCallParentheses:
+  Enabled: true
+
+# Style/MethodMissing configuration
+Style/MethodMissing:
+  Enabled: true
+
+# Style/RedundantParentheses configuration
+Style/RedundantParentheses:
+  Enabled: true
+
+# Style/StringLiterals configuration
+Style/StringLiterals:
+  Enabled: true
+
+# Style/TrailingWhitespace configuration
+Style/TrailingWhitespace:
+  Enabled: true
+
+# Metrics/BlockLength configuration
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*' # Exclude spec directory
+
+# Metrics/MethodLength configuration
+Metrics/MethodLength:
+  Exclude:
+    - 'spec/**/*' # Exclude spec directory
+
+# Metrics/ModuleLength configuration
+Metrics/ModuleLength:
+  Exclude:
+    - 'spec/**/*' # Exclude spec directory
+
+# Metrics/ParameterLists configuration
+Metrics/ParameterLists:
+  Exclude:
+    - 'spec/**/*' # Exclude spec directory
+
+# Metrics/PerceivedComplexity configuration
+Metrics/PerceivedComplexity:
+  Exclude:
+    - 'spec/**/*' # Exclude spec directory
+
+# Metrics/AbcSize configuration
+Metrics/AbcSize:
+  Exclude:
+    - 'spec/**/*' # Exclude spec directory
