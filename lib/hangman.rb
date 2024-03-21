@@ -1,14 +1,24 @@
 # frozen-string-literal: true
 
+# Key words:
+# word_teaser - the word with the letters that have been guessed correctly
+# word - the word that the player is trying to guess
+# lives - the number of lives the player has left
+# guess - the letter that the player has guessed
+
+require 'rubocop'
+
 # Hangman class
 class Hangman
   def initialize
+    @user_interaction = UserInteraction.new
     @word = select_word.split('')
     @lives = 7
     @word_teaser = ''
     @word.length.times do
       @word_teaser += '_ '
     end
+    @player = Player.new(@user_interaction.player_name, @lives)
   end
 
   def play_game
@@ -36,17 +46,38 @@ class Hangman
   end
 
   def display_progress
-    if @word.include?('_')
-      print_teaser
-    else
-      puts 'Congratulations! You have won!'
-    end
+    print_teaser if @word.include?('_')
   end
-
-
 end
 
 class UserInteraction
-  def initialize
+  def guess_input
+    print 'Enter a letter: '
+    gets.chomp
+  end
+
+  def player_name
+    print 'Enter your name: '
+    gets.chomp
+  end
+
+  def play_again?
+    print 'Do you want to play again? (yes/no): '
+    gets.chomp.downcase == 'yes'
+  end
+
+  def display_lives(lives)
+    puts "You have #{lives} lives left."
+  end
+end
+
+class Player
+  attr_reader :name, :lives
+
+  def initialize(name, lives)
+    @name = name
+    @lives = lives
+  end
+end
 
 Hangman.new
