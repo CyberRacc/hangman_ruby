@@ -1,12 +1,19 @@
 # frozen-string-literal: true
 
 # ToDos:
-# 1. Fix the bug where the game doesn't end when the user guesses the word correctly.
-# 2. Refactor the code to make it more modular.
-# 3. Add a feature to allow the user to guess the whole word.
+# 1. Add a feature to allow the user to guess the whole word.
+
+# Contains helper methods
+module Helpers
+  def self.clear_screen
+    system('clear') || system('cls')
+  end
+end
 
 # Contains the main game logic
 class Hangman
+  include Helpers
+
   def initialize
     @lives = 7
     @user_interaction = UserInteraction.new
@@ -15,6 +22,7 @@ class Hangman
   end
 
   def welcome
+    Helpers.clear_screen
     puts 'Welcome to Hangman!'
   end
 
@@ -49,12 +57,7 @@ class Hangman
   end
 
   def check_win
-    if @word.word == @word.word_teaser
-      puts 'Congratulations! You guessed the word correctly'
-      true
-    else
-      false
-    end
+    @word.word == @word.word_teaser.gsub(' ', '')
   end
 
   def check_guess(guess)
@@ -126,7 +129,6 @@ class UserInteraction
       puts 'Thanks for playing!'
       exit
     elsif guess.length > 1 || guess.match?(/[^a-zA-Z]/)
-      puts 'Please enter a single letter'
       false
     else
       true
