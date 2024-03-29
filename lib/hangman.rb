@@ -151,7 +151,8 @@ class Word
   end
 
   def random_word
-    File.open('../google-10000-english-no-swears.txt', 'r') do |file|
+    file_path = File.join(__dir__, '..', 'google-10000-english-no-swears.txt')
+    File.open(file_path, 'r') do |file|
       all_words = file.readlines.map(&:chomp)
       selected_word = all_words.select { |word| word.length >= 5 && word.length <= 12 }
       selected_word.sample
