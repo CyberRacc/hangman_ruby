@@ -2,11 +2,19 @@
 
 # ToDos:
 # 1. Add a feature to allow the user to guess the whole word.
+# Add an option to save the current game and resume later.
+# Will likely need to create some kind of JSON file to store the game state.
+
+require 'json'
 
 # Contains helper methods
 module Helpers
   def self.clear_screen
     system('clear') || system('cls')
+  end
+
+  def self.create_save_file(game)
+    File.write('save.json', game.to_json)
   end
 end
 
@@ -17,17 +25,12 @@ class Hangman
   def initialize
     @lives = 7
     @user_interaction = UserInteraction.new
-    welcome
+    @word = Word.new
+    load_game if File.exist?('save.json') && @user_interaction.load_game?
     start_game if @user_interaction.start_game?
   end
 
-  def welcome
-    Helpers.clear_screen
-    puts 'Welcome to Hangman!'
-  end
-
   def start_game
-    @word = Word.new
     puts 'Welcome to Hangman!'
     puts 'Here is your word:'
     puts @word.word_teaser
@@ -41,12 +44,15 @@ class Hangman
       check_guess(guess)
       display_teaser
       break if check_win || @lives.zero?
+
+      save_game if guess == 'save' && @user_interaction.save_game?
     end
     check_win == true ? game_won : game_over
   end
 
   def game_won
     puts 'Congratulations! You guessed the word correctly'
+    File.delete('save.json') if File.exist?('save.json')
     @user_interaction.play_again
   end
 
@@ -61,13 +67,13 @@ class Hangman
   end
 
   def check_guess(guess)
-    puts "You guessed: #{guess}"
+    puts "You guessed: #{guess}" unless guess == 'save'
     if @word.word.include?(guess)
       puts 'Good guess!'
       update_teaser(guess)
     else
-      puts 'Sorry, that letter is not in the word'
-      decrease_life
+      puts 'Sorry, that letter is not in the word' unless guess == 'save'
+      decrease_life unless guess == 'save'
     end
   end
 
@@ -88,6 +94,24 @@ class Hangman
   def decrease_life
     @lives -= 1
     puts "You have #{@lives} lives left"
+  end
+
+  def save_game
+    game_state = {
+      word: @word.word,
+      word_teaser: @word.word_teaser,
+      lives: @lives
+    }
+    Helpers.create_save_file(game_state)
+    puts 'Game saved!'
+  end
+
+  def load_game
+    game_state = JSON.parse(File.read('save.json'))
+    @word.word = game_state['word']
+    @word.word_teaser = game_state['word_teaser']
+    @lives = game_state['lives']
+    puts 'Game loaded!'
   end
 end
 
@@ -128,18 +152,39 @@ class UserInteraction
     if guess == 'exit'
       puts 'Thanks for playing!'
       exit
+    elsif guess == 'save'
+      true
     elsif guess.length > 1 || guess.match?(/[^a-zA-Z]/)
       false
     else
       true
     end
   end
+
+  def save_game?
+    print 'Do you want to save the game? (yes/no): '
+    response = gets.chomp.downcase
+    until %w[yes no].include?(response)
+      print 'Please enter "yes" or "no": '
+      response = gets.chomp.downcase
+    end
+    response == 'yes'
+  end
+
+  def load_game?
+    print 'Do you want to load the game? (yes/no): '
+    response = gets.chomp.downcase
+    until %w[yes no].include?(response)
+      print 'Please enter "yes" or "no": '
+      response = gets.chomp.downcase
+    end
+    response == 'yes'
+  end
 end
 
 # Holds the logic for creating a word based on a text file.
 class Word
-  attr_reader :word
-  attr_accessor :word_teaser
+  attr_accessor :word, :word_teaser
 
   def initialize
     @word = random_word
