@@ -1,10 +1,5 @@
 # frozen-string-literal: true
 
-# ToDos:
-# 1. Add a feature to allow the user to guess the whole word.
-# Add an option to save the current game and resume later.
-# Will likely need to create some kind of JSON file to store the game state.
-
 require 'json'
 
 # Contains helper methods
